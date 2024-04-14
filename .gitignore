@@ -27,3 +27,6 @@ elevenlabs.json
 pack.bat
 gitcmd.bat
 google.txt
+.history/*
+uvr5_weights/*
+uvr5_weights

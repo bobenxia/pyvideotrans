@@ -53,12 +53,18 @@ def all_recogn(*, detect_language=None, audio_file=None, cache_folder=None,model
     down_root = os.path.normpath(config.rootdir + "/models")
     model=None
     try:
+        logging.info("正在构建模型")
+        logging.info(f"配置为: model_name:{model_name}, device:{'cuda' if is_cuda else 'cpu'}, ")
+        logging.info(f"compute_type:{ 'float32' if model_name.startswith('distil-') else  config.settings['cuda_com_type']}, ")
+        logging.info(f"download_root:{down_root}, num_workers: {config.settings['whisper_worker']},")
+        logging.info(f"cpu_threads:{os.cpu_count() if int(config.settings['whisper_threads']) < 1 else int(config.settings['whisper_threads'])},")
         model = WhisperModel(model_name, device="cuda" if is_cuda else "cpu",
-                             compute_type= "float32" if model_name.startswith('distil-') else  config.settings['cuda_com_type'],
+                             compute_type= 'float32' if model_name.startswith('distil-') else  config.settings['cuda_com_type'],
                              download_root=down_root,
                              num_workers=config.settings['whisper_worker'],
                              cpu_threads=os.cpu_count() if int(config.settings['whisper_threads']) < 1 else int(config.settings['whisper_threads']),
                              local_files_only=True)
+        logging.info("构建模型成功")
         if config.current_status != 'ing' and config.box_recogn!='ing':
             return False
         if audio_file.endswith('.m4a'):
@@ -191,7 +197,7 @@ def split_recogn(*, detect_language=None, audio_file=None, cache_folder=None,mod
     total_length = len(nonsilent_data)
     try:
         model = WhisperModel(model_name, device="cuda" if is_cuda else "cpu",
-                         compute_type="float32" if model_name.startswith('distil-') else config.settings['cuda_com_type'],
+                         compute_type='float32' if model_name.startswith('distil-') else config.settings['cuda_com_type'],
                          download_root=config.rootdir + "/models",
                          local_files_only=True)
     except Exception as e:
@@ -448,7 +454,7 @@ def split_recogn_old(*, detect_language=None, audio_file=None, cache_folder=None
     start_t = time.time()
     try:
         model = WhisperModel(model_name, device="cuda" if config.params['cuda'] else "cpu",
-                         compute_type="float32" if model_name.startswith('distil-') else config.settings['cuda_com_type'],
+                         compute_type='float32' if model_name.startswith('distil-') else config.settings['cuda_com_type'],
                          download_root=config.rootdir + "/models",
                          local_files_only=True)
     except Exception as e:
